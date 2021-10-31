@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    #nav {
+      background-color: aqua;
+      width: 100%;
+      display: flex;
+     height: 84px;
+      background-color: #e9e9e9;
+    }
+
+    #nav a {
+      float: left;
+      display: block;
+      color: black;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+    #nav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    #nav .search-container {
+      margin-left: 48%;
+    }
+    #nav .search-container input {
+      margin-top: 26px;
+      padding: 0.5rem;
+      width: 70%;
+    }
+    #nav .search-container button {
+      float: right;
+      padding: 8px 10px;
+      margin-top: 25px;
+      margin-right: 16px;
+      background: #ddd;
+      font-size: 17px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #nav .search-container button:hover {
+      background: #ccc;
+    }
+    #nav .list-container {
+      display: flex;
+    }
+    #movie_list{
+      width: 77%;
+      background-color: #ffff;
+      
+    }
+  </style>
+  <body>
+    <nav id="nav">
+      <div class="list-container">
+        <h1><a href="Movie_App.html">Movie Mania</a></h1>
+        <h1><a href="Trending_Movie.html">Trending Movies</a></h1>
+      </div>
+      <div class="search-container">
+        <form action="/">
+          <input type="text" placeholder="Search.." name="search" />
+          <button type="submit"><i class="fa fa-search"></i></button>
+          <div id="movie_list"></div>
+        </form>
+      </div>
+    </nav>
+    <div id="container"></div>
+  </body>
+</html>
+<script>
+  let cont = document.getElementById("container");
+  const fu = async () => {
+    let res = await fetch(
+      `https://api.themoviedb.org/4/list/1?api_key=810be2a40c65323ffb597cd7215b5696`
+    );
+
+    let data = await res.json();
+    console.log("Data: ",data);
+
+    trending_Movie(data.results);
+  };
+  fu();
+
+  const trending_Movie = (data) => {
+    data.forEach((e) => {
+      let div = document.createElement("div");
+
+      let img = document.createElement("img");
+
+      img.src = `https://image.tmdb.org/t/p/w500${e.poster_path}`;
+
+      let title = document.createElement("p");
+      title.innerHTML = "Title" + " " + e.title;
+
+      let type = document.createElement("p");
+      type.innerHTML = "Type" + " " + e.media_type;
+
+      let date = document.createElement("p");
+      date.innerHTML = "Released Date" + " " + e.release_date;
+
+      div.append(img, title, type, date);
+
+      cont.append(div);
+    });
+  };
+</script>

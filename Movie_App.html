@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+  />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    #nav {
+      background-color: aqua;
+      width: 100%;
+      height: 84px;
+      display: flex;
+      background-color: #e9e9e9;
+    }
+
+    #nav a {
+      float: left;
+      display: block;
+      color: black;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+      font-size: 17px;
+    }
+    #nav a:hover {
+      background-color: #ddd;
+      color: black;
+    }
+
+    #nav .search-container {
+      margin-left: 48%;
+    }
+    #nav .search-container input {
+      margin-top: 26px;
+      padding: 0.5rem;
+      width: 70%;
+    }
+    #nav .search-container button {
+      float: right;
+      padding: 8px 10px;
+      margin-top: 25px;
+      margin-right: 16px;
+      background: #ddd;
+      font-size: 17px;
+      border: none;
+      cursor: pointer;
+    }
+
+    #nav .search-container button:hover {
+      background: #ccc;
+    }
+    #nav .list-container {
+      display: flex;
+    }
+    #movie_list{
+      width: 72%;
+      background-color: #ffff;
+      box-shadow: -5px 5px 10px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      margin-top: -15px;
+      padding: 0.5rem;
+
+
+    }
+    #movie_list:hover{
+      cursor: pointer;
+      background-color: #ccc;
+    }
+  </style>
+  <body>
+    <nav id="nav">
+      <div class="list-container">
+        <h1><a href="Movie_App.html">Movie Mania</a></h1>
+        <h1><a href="Trending_Movie.html">Trending Movies</a></h1>
+      </div>
+      <div class="search-container">
+        <form action="/">
+          <input
+            oninput="debounce(func,1000)"
+            id="input"
+            type="text"
+            placeholder="Search.."
+            name="search"
+            id="input"
+          />
+          <button type="submit">
+            <i onclick="click_to_search()" class="fa fa-search"></i>
+          </button>
+          <div id="movie_list"></div>
+        </form>
+      </div>
+    </nav>
+    <div id="container"></div>
+    <div id="container1"></div>
+  </body>
+</html>
+<script>
+  // trending -- https://api.themoviedb.org/4/list/1?api_key=810be2a40c65323ffb597cd7215b5696
+  // img.src=`https://image.tmdb.org/t/p/w500${m.poster_path}`
+  //let res = await fetch(`https://www.omdbapi.com/?s=${movie_name}&apikey=4b125d6`);
+  async function Search_Movies(movie_Name){
+      try{
+        let res = await fetch(`https://www.omdbapi.com/?s=${movie_Name}&apikey=4b125d6`);
+        let data = await res.json();
+        console.log("Data: ",data);
+        return data;
+      }
+      catch(e){
+        alert(e);
+      }
+  }
+
+  let div = document.getElementById('movie_list');
+  
+  function append_Movies(movies_Data) {
+
+
+    div.innerHTML = null;
+
+    if(movies_Data===undefined){
+      alert("Sorry! This Movie is not Available");
+    }
+    movies_Data.forEach(function(e) {
+      let movieName = document.createElement('p');
+      console.log("MOvie Name: ",movieName);
+      movieName.innerHTML = e.Title;
+      movieName.onclick = function (){
+        poster(e);
+      }
+      div.append(movieName);
+    });
+  }
+
+  async function func(){
+    console.log("Func: ",func);
+    let movie_Name = document.getElementById('input').value;
+
+    let res = await Search_Movies(movie_Name);
+    let movies_Data = res.Search;
+    console.log("Movie Data: ",movies_Data);
+    append_Movies(movies_Data);
+  }
+
+  var time;
+
+  function debounce(fun,delay) {
+    if(time){
+      clearTimeout(time);
+    }
+    time = setTimeout(function (){
+      fun();
+    },delay);
+  }
+
+  function poster(e) {
+    if(localStorage.getItem('Movie_App')=== null){
+      localStorage.setItem('Movie_App',JSON.stringify([]));
+    }
+    let arr = JSON.parse(localStorage.getItem('Movie_App'));
+    arr.push(e);
+    localStorage.setItem('Movie_App',JSON.stringify(arr));
+    window.location.href = 'show_Movie_Details.html';
+  }
+
+
+  
+</script>
